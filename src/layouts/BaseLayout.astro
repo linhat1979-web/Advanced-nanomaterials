@@ -18,12 +18,12 @@ const base = import.meta.env.BASE_URL;
 
     <style is:global>
       :root {
-        --bg: #f8f5f2; /* 暖色調背景，提升閱讀舒適度 */
+        --bg: #f8f5f2; /* 暖色調背景 */
         --card: #ffffff; /* 純白卡片 */
-        --text: #2a1f18; /* 深褐色文字，比純黑更具質感 */
-        --muted: #6f5a4d; /* 柔和的輔助文字 */
-        --brand: #8b4513; /* 品牌主色：深鞍褐 */
-        --brand2: #d2691e; /* 品牌次色：肉桂褐 */
+        --text: #2a1f18; /* 深褐色文字 */
+        --muted: #6f5a4d; /* 柔和輔助文字 */
+        --brand: #8b4513; /* 品牌主色 */
+        --brand2: #d2691e; /* 品牌次色 */
         --border: rgba(123, 85, 55, 0.12);
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       }
@@ -32,7 +32,6 @@ const base = import.meta.env.BASE_URL;
 
       body {
         margin: 0;
-        /* 優化中文字體排版 */
         font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
         background-color: var(--bg);
         color: var(--text);
@@ -46,7 +45,7 @@ const base = import.meta.env.BASE_URL;
         position: sticky;
         top: 0;
         z-index: 50;
-        background: rgba(248, 245, 242, 0.85); /* 磨砂玻璃效果 */
+        background: rgba(248, 245, 242, 0.85);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border);
       }
@@ -63,7 +62,6 @@ const base = import.meta.env.BASE_URL;
       .links a { font-size: 15px; color: var(--muted); font-weight: 500; }
       .links a:hover { color: var(--brand); }
 
-      /* 聯絡我們按鈕：藥丸形狀 */
       .pill {
         border: 1.5px solid var(--brand);
         padding: 8px 20px;
@@ -76,28 +74,17 @@ const base = import.meta.env.BASE_URL;
 
       main { padding: 40px 0 80px; }
 
-      /* 網格系統：12欄位佈局 */
       .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
       .col12 { grid-column: span 12; }
       .col6 { grid-column: span 6; }
       .col4 { grid-column: span 4; }
       
-      /* 手機版響應式設定 */
       @media (max-width: 800px) { 
-        nav {
-          flex-direction: column;
-          gap: 16px;
-          text-align: center;
-        }
-        .links {
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 12px;
-        }
+        nav { flex-direction: column; gap: 16px; text-align: center; }
+        .links { flex-wrap: wrap; justify-content: center; gap: 12px; }
         .col6, .col4 { grid-column: span 12; } 
       }
 
-      /* 卡片組件：用於研究方向、新聞等 */
       .card {
         background: var(--card);
         border: 1px solid var(--border);
@@ -107,29 +94,10 @@ const base = import.meta.env.BASE_URL;
         transition: 0.3s;
       }
       .card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); }
-      .card h2 { margin: 0 0 12px; font-size: 22px; color: var(--brand); }
-
-      .meta { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
-
-      /* 按鈕樣式 */
-      .btn {
-        display: inline-flex;
-        align-items: center; gap: 8px;
-        padding: 12px 22px; border-radius: 14px;
-        border: 1px solid var(--border);
-        background: white;
-        font-weight: 500;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      .btnPrimary {
-        background: linear-gradient(135deg, var(--brand), var(--brand2));
-        border: none;
-        color: white !important;
-      }
 
       footer { border-top: 1px solid var(--border); padding: 40px 0; color: var(--muted); font-size: 14px; text-align: center; }
       
+      /* 翻譯按鈕定位 */
       .translateBar { position: fixed; right: 24px; bottom: 24px; z-index: 100; }
     </style>
   </head>
@@ -161,76 +129,77 @@ const base = import.meta.env.BASE_URL;
       </div>
     </main>
 
- <footer>
-  <div class="container">
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 0;">
-      
-      <div style="text-align: center;">
-        <div style="font-weight: 600; margin-bottom: 4px; color: var(--brand);">
-          © {new Date().getFullYear()} Advanced Nanomaterials Laboratory
-        </div>
-        <div style="font-size: 12px; color: var(--muted);">
-          最後更新時間：{
-            new Intl.DateTimeFormat('zh-TW', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            }).format(new Date())
-          }
+    <footer>
+      <div class="container">
+        <div style="text-align: center;">
+          <div style="font-weight: 600; margin-bottom: 4px; color: var(--brand);">
+            © {new Date().getFullYear()} Advanced Nanomaterials Laboratory
+          </div>
+          <div style="font-size: 12px; color: var(--muted);">
+            最後更新時間：{
+              new Intl.DateTimeFormat('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }).format(new Date())
+            }
+          </div>
         </div>
       </div>
-      </div> 
+    </footer>
+
+    <div class="translateBar">
+      <button id="translateBtn" class="pill" style="background: white; cursor: pointer; box-shadow: var(--shadow);">
+        English
+      </button>
     </div>
-  </div>
-</footer>
 
-  <script>
-  const btn = document.getElementById('translateBtn');
-  let translated = false;
+    <script>
+      const btn = document.getElementById('translateBtn');
+      let translated = false;
 
-  async function translateElement(el) {
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
-    let node;
-    const textNodes = [];
+      async function translateElement(el) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+        let node;
+        const textNodes = [];
 
-    while (node = walker.nextNode()) {
-      if (node.nodeValue.trim()) textNodes.push(node);
-    }
+        while (node = walker.nextNode()) {
+          if (node.nodeValue.trim()) textNodes.push(node);
+        }
 
-    for (const node of textNodes) {
-      try {
-        const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-Hant&tl=en&dt=t&q=' + encodeURIComponent(node.nodeValue));
-        const data = await res.json();
-        let translatedText = '';
-        for (const part of data[0]) translatedText += part[0];
-        node.nodeValue = translatedText;
-      } catch (e) {
-        console.error('Node translation failed', e);
-      }
-    }
-  }
-
-  btn?.addEventListener('click', async () => {
-    if (!translated) {
-      const originalText = btn.textContent;
-      btn.textContent = 'Translating...';
-      btn.disabled = true;
-
-      const regions = [document.querySelector('header'), document.querySelector('main'), document.querySelector('footer')];
-      for (const region of regions) {
-        if (region) await translateElement(region);
+        for (const node of textNodes) {
+          try {
+            const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-Hant&tl=en&dt=t&q=' + encodeURIComponent(node.nodeValue));
+            const data = await res.json();
+            let translatedText = '';
+            for (const part of data[0]) translatedText += part[0];
+            node.nodeValue = translatedText;
+          } catch (e) {
+            console.error('Node translation failed', e);
+          }
+        }
       }
 
-      translated = true;
-      btn.textContent = '中文';
-      btn.disabled = false;
-    } else {
-      location.reload();
-    }
-  });
-</script>
-</body>
+      btn?.addEventListener('click', async () => {
+        if (!translated) {
+          btn.textContent = 'Translating...';
+          btn.disabled = true;
+
+          const regions = [document.querySelector('header'), document.querySelector('main'), document.querySelector('footer')];
+          for (const region of regions) {
+            if (region) await translateElement(region);
+          }
+
+          translated = true;
+          btn.textContent = '中文';
+          btn.disabled = false;
+        } else {
+          location.reload();
+        }
+      });
+    </script>
+  </body>
 </html>
