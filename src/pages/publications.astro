@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../../config/site.json';
+
+// 抓取所有論文並按年份排序
+const allPubs = await Astro.glob('../content/publications/*.md');
+allPubs.sort((a, b) => b.frontmatter.year - a.frontmatter.year);
+
+const years = [...new Set(allPubs.map(p => p.frontmatter.year))];
+---
+
+<BaseLayout title={`期刊發表 - ${site.labNameEn}`}>
+  <h1 style="color: var(--brand); margin-bottom: 8px;">期刊發表</h1>
+  <p class="meta">收錄本實驗室歷年發表之國際期刊研究成果。</p>
+
+  {years.map(year => (
+    <section style="margin-top: 36px;">
+      <h2 style="color: var(--brand); border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">
+        {year}
+      </h2>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        {allPubs.filter(p => p.frontmatter.year === year).map(p => (
+          <div class="card" style="padding: 20px; border-left: 5px solid var(--brand2);">
+            <div style="font-size: 13px; color: var(--brand2); font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">
+              {p.frontmatter.journal}
+            </div>
+            <h3 style="margin: 0 0 8px; font-size: 18px; line-height: 1.4;">{p.frontmatter.title}</h3>
+            <p style="font-size: 14px; color: var(--text); margin-bottom: 12px; font-style: italic;">
+              {p.frontmatter.authors}
+            </p>
+            {p.frontmatter.doi && (
+              <a href={`https://doi.org/${p.frontmatter.doi}`} target="_blank" class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--bg);">
+                連結至期刊 (DOI) ↗
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+</BaseLayout>

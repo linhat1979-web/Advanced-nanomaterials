@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../../config/site.json';
+
+// 1. 抓取所有活動紀錄並按日期降序排列
+const allActivities = await Astro.glob('../content/activities/*.md');
+allActivities.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<BaseLayout title={`實驗室活動 - ${site.labNameEn}`}>
+  
+  <link rel="stylesheet" href="https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.css" />
+
+  <div style="margin-bottom: 32px;">
+    <h1 style="color: var(--brand); margin-bottom: 8px;">實驗室活動</h1>
+    <p class="meta">紀錄實驗室共同努力與生活的點點滴滴（點擊圖片可放大瀏覽）。</p>
+  </div>
+
+  <div class="grid" id="activity-gallery">
+    {allActivities.map((item, activityIndex) => {
+      // 兼容單張圖 (image) 或多張圖 (images) 的寫法
+      const imageList = item.frontmatter.images || (item.frontmatter.image ? [item.frontmatter.image] : []);
+      
+      return (
+        <div class="card col12" style="margin-bottom: 24px; padding: 24px;">
+          <div style="margin-bottom: 20px;">
+            <div class="meta" style="font-size: 13px; margin-bottom: 4px;">📅 {item.frontmatter.date}</div>
+            <h2 style="margin: 0 0 12px; color: var(--brand); font-size: 24px;">{item.frontmatter.title}</h2>
+            <div class="activity-text" style="line-height: 1.8; color: var(--text);">
+              <Fragment set:html={item.compiledContent()} />
+            </div>
+          </div>
+
+          <div class="photo-grid">
+            {imageList.map((imgSrc, imgIndex) => (
+              <a 
+                href={imgSrc} 
+                class="pswp-link" 
+                target="_blank"
+                data-pswp-width="1200"
+                data-pswp-height="900"
+              >
+                <div class="thumb-wrapper">
+                  <img 
+                    src={imgSrc} 
+                    alt={`${item.frontmatter.title}-${imgIndex}`} 
+                    class="thumb-img"
+                    loading="lazy"
+                  />
+                  <div class="zoom-overlay">🔍</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <script>
+    import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
+
+    function initLightbox() {
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: '#activity-gallery',
+        children: '.pswp-link',
+        pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js')
+      });
+
+      // 自動修正圖片比例
+      lightbox.on('gettingData', (event) => {
+        const { data } = event;
+        const img = data.element.querySelector('img');
+        if (img && img.naturalWidth > 0) {
+          data.width = img.naturalWidth;
+          data.height = img.naturalHeight;
+        }
+      });
+
+      lightbox.init();
+    }
+
+    // 確保在 Astro 環境下穩定執行
+    initLightbox();
+    document.addEventListener('astro:after-swap', initLightbox);
+  </script>
+
+</BaseLayout>
+
+<style>
+  /* 照片網格排版 */
+  .photo-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap; /* 照片太多自動換行 */
+  }
+
+  .thumb-wrapper {
+    width: 200px;
+    height: 140px;
+    background: var(--bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+  }
+
+  .thumb-wrapper:hover {
+    transform: translateY(-3px);
+    border-color: var(--brand);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .zoom-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .thumb-wrapper:hover .zoom-overlay {
+    opacity: 1;
+  }
+
+  /* 手機版適應 */
+  @media (max-width: 600px) {
+    .photo-grid {
+      justify-content: center;
+    }
+    .thumb-wrapper {
+      width: 140px

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../../config/site.json';
+
+const allResearch = await Astro.glob('../content/research/*.md');
+const researchList = allResearch.sort((a, b) => (a.frontmatter.order || 99) - (b.frontmatter.order || 0));
+---
+
+<BaseLayout title={`研究方向 - ${site.labNameEn}`}>
+  <h1 style="color: var(--brand); margin-bottom: 8px;">研究方向</h1>
+  <p class="meta">我們致力於開發前瞻性發光材料及其在感測與能源領域的應用。</p>
+
+  <div class="grid" style="margin-top: 30px;">
+    {researchList.map(item => (
+      <div class="card col12" style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+          {item.frontmatter.image && (
+            <img src={item.frontmatter.image} alt={item.frontmatter.title} 
+                 style="width: 100%; max-width: 350px; border-radius: 16px; object-fit: cover; border: 1px solid var(--border);" />
+          )}
+          <div style="flex: 1; min-width: 300px;">
+            <h2 style="margin-top: 0; color: var(--brand);">{item.frontmatter.title}</h2>
+            <div style="line-height: 1.8; color: var(--text); white-space: pre-wrap;">
+              <Fragment set:html={item.compiledContent()} />
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

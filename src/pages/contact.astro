@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../../config/site.json';
+
+const myEmail = "cwchang@cc.ncue.edu.tw";
+---
+
+<BaseLayout title={`聯絡我們 - ${site.labNameEn}`}>
+  <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px; text-align: center;">
+    <h1 style="color: var(--brand); font-size: 32px; margin-bottom: 16px;">聯絡我們</h1>
+    <p class="meta" style="font-size: 18px; line-height: 1.6;">
+      如果您對我們的研究感興趣，或有合作開發計畫、報考研究生的需求，歡迎隨時與我們聯繫。
+    </p>
+
+    <div class="card" style="margin-top: 40px; padding: 40px; border-top: 5px solid var(--brand);">
+      <div style="font-size: 50px; margin-bottom: 20px;">✉️</div>
+      <h2 style="margin-bottom: 10px;">電子郵件信箱</h2>
+      <p style="font-size: 20px; color: var(--brand2); font-weight: 600; margin-bottom: 30px;">
+        {myEmail}
+      </p>
+      
+      <a href={`mailto:${myEmail}?subject=來自實驗室網站的詢問`} class="btn" style="padding: 15px 40px; font-size: 18px; font-weight: bold;">
+        直接發送郵件 ↗
+      </a>
+    </div>
+
+    <div style="margin-top: 40px; color: var(--muted); font-size: 14px;">
+      <p>地址：500 彰化市進德路 1 號 彰化師範大學 化學系</p>
+      <p>實驗室：先進奈米材料研究室 (Advanced Nanomaterials Lab)</p>
+    </div>
+  </div>
+</BaseLayout>
