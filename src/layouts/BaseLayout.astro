@@ -1,5 +1,5 @@
 ---
-// 從 Astro props 取得標題與描述，若無則使用預設值 [cite: 15, 52]
+// 從 Astro props 取得標題與描述，若無則使用預設值
 const { title = 'Advanced Nanomaterials Laboratory', description = 'Laboratory website' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
@@ -18,12 +18,12 @@ const base = import.meta.env.BASE_URL;
 
     <style is:global>
       :root {
-        --bg: #f8f5f2;           /* 暖色調背景，提升閱讀舒適度 */
-        --card: #ffffff;         /* 純白卡片 */
-        --text: #2a1f18;         /* 深褐色文字，比純黑更具質感 */
-        --muted: #6f5a4d;        /* 柔和的輔助文字 */
-        --brand: #8b4513;        /* 品牌主色：深鞍褐 */
-        --brand2: #d2691e;       /* 品牌次色：肉桂褐 */
+        --bg: #f8f5f2; /* 暖色調背景，提升閱讀舒適度 */
+        --card: #ffffff; /* 純白卡片 */
+        --text: #2a1f18; /* 深褐色文字，比純黑更具質感 */
+        --muted: #6f5a4d; /* 柔和的輔助文字 */
+        --brand: #8b4513; /* 品牌主色：深鞍褐 */
+        --brand2: #d2691e; /* 品牌次色：肉桂褐 */
         --border: rgba(123, 85, 55, 0.12);
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       }
@@ -32,7 +32,7 @@ const base = import.meta.env.BASE_URL;
 
       body {
         margin: 0;
-        /* 優化中文字體排版 [cite: 18, 55] */
+        /* 優化中文字體排版 */
         font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
         background-color: var(--bg);
         color: var(--text);
@@ -46,7 +46,7 @@ const base = import.meta.env.BASE_URL;
         position: sticky;
         top: 0;
         z-index: 50;
-        background: rgba(248, 245, 242, 0.85); /* 磨砂玻璃效果 [cite: 19, 56] */
+        background: rgba(248, 245, 242, 0.85); /* 磨砂玻璃效果 */
         backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border);
       }
@@ -63,7 +63,7 @@ const base = import.meta.env.BASE_URL;
       .links a { font-size: 15px; color: var(--muted); font-weight: 500; }
       .links a:hover { color: var(--brand); }
 
-      /* 聯絡我們按鈕：藥丸形狀 [cite: 24, 61] */
+      /* 聯絡我們按鈕：藥丸形狀 */
       .pill {
         border: 1.5px solid var(--brand);
         padding: 8px 20px;
@@ -76,14 +76,28 @@ const base = import.meta.env.BASE_URL;
 
       main { padding: 40px 0 80px; }
 
-      /* 網格系統：12欄位佈局 [cite: 29, 66] */
+      /* 網格系統：12欄位佈局 */
       .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
       .col12 { grid-column: span 12; }
       .col6 { grid-column: span 6; }
       .col4 { grid-column: span 4; }
-      @media (max-width: 900px) { .col6, .col4 { grid-column: span 12; } }
+      
+      /* 手機版響應式設定 */
+      @media (max-width: 800px) { 
+        nav {
+          flex-direction: column;
+          gap: 16px;
+          text-align: center;
+        }
+        .links {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 12px;
+        }
+        .col6, .col4 { grid-column: span 12; } 
+      }
 
-      /* 卡片組件：用於研究方向、新聞等 [cite: 30, 67] */
+      /* 卡片組件：用於研究方向、新聞等 */
       .card {
         background: var(--card);
         border: 1px solid var(--border);
@@ -97,9 +111,10 @@ const base = import.meta.env.BASE_URL;
 
       .meta { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
 
-      /* 按鈕樣式 [cite: 32, 69] */
+      /* 按鈕樣式 */
       .btn {
-        display: inline-flex; align-items: center; gap: 8px;
+        display: inline-flex;
+        align-items: center; gap: 8px;
         padding: 12px 22px; border-radius: 14px;
         border: 1px solid var(--border);
         background: white;
@@ -170,7 +185,7 @@ const base = import.meta.env.BASE_URL;
 
       <div class="visitor-counter" style="margin-top: 5px;">
         <img 
-          src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://cwchang-lab.github.io&count_bg=%238B4513&title_bg=%236F5A4D&title=Visitors" 
+          src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://linhat1979-web.github.io/Advanced-nanomaterials&count_bg=%238B4513&title_bg=%236F5A4D&title=Visitors" 
           alt="Visitor Counter"
           style="display: block; height: 20px;"
         />
@@ -184,7 +199,6 @@ const base = import.meta.env.BASE_URL;
   const btn = document.getElementById('translateBtn');
   let translated = false;
 
-  // 遍歷所有包含文字的節點進行翻譯，而不破壞 HTML 結構
   async function translateElement(el) {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
     let node;
@@ -194,7 +208,6 @@ const base = import.meta.env.BASE_URL;
       if (node.nodeValue.trim()) textNodes.push(node);
     }
 
-    // 批量翻譯以提高效率
     for (const node of textNodes) {
       try {
         const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-Hant&tl=en&dt=t&q=' + encodeURIComponent(node.nodeValue));
@@ -214,7 +227,6 @@ const base = import.meta.env.BASE_URL;
       btn.textContent = 'Translating...';
       btn.disabled = true;
 
-      // 針對 header, main, footer 進行原位翻譯
       const regions = [document.querySelector('header'), document.querySelector('main'), document.querySelector('footer')];
       for (const region of regions) {
         if (region) await translateElement(region);
@@ -224,8 +236,9 @@ const base = import.meta.env.BASE_URL;
       btn.textContent = '中文';
       btn.disabled = false;
     } else {
-      // 點擊「中文」時直接重新整理網頁回復原狀
       location.reload();
     }
   });
 </script>
+</body>
+</html>
