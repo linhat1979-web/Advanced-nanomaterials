@@ -1,6 +1,7 @@
 ---
 // 從 Astro props 取得標題與描述，若無則使用預設值 [cite: 15, 52]
 const { title = 'Advanced Nanomaterials Laboratory', description = 'Laboratory website' } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <html lang="zh-Hant">
@@ -126,14 +127,14 @@ const { title = 'Advanced Nanomaterials Laboratory', description = 'Laboratory w
             <span>Lab website • multi-language</span>
           </div>
           <div class="links">
-            <a href="/">首頁</a>
-            <a href="/research">研究方向</a>
-            <a href="/people">成員</a>
-            <a href="/equipment">研究設備</a>
-            <a href="/publications">期刊發表</a>
-            <a href="/activities">實驗室活動</a>
-            <a href="/news">最新消息</a>
-            <a class="pill" href="/contact">聯絡我們</a>
+           <a href={`${base}/`}>首頁</a>
+           <a href={`${base}/research`}>研究方向</a>
+           <a href={`${base}/people`}>成員</a>
+           <a href={`${base}/equipment`}>研究設備</a>
+           <a href={`${base}/publications`}>期刊發表</a>
+           <a href={`${base}/activities`}>實驗室活動</a>
+           <a href={`${base}/news`}>最新消息</a>
+           <a class="pill" href={`${base}/contact`}>聯絡我們</a>
           </div>
         </nav>
       </div>

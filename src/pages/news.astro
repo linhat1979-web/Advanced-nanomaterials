@@ -31,6 +31,9 @@ news.sort((a, b) => {
   const dateB = new Date(b.date).getTime();
   return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
 });
+// src/pages/news.astro --- 區塊內
+const base = import.meta.env.BASE_URL;
+...
 ---
 
 <BaseLayout title={`最新消息 - ${site.labNameEn}`}>
@@ -40,7 +43,7 @@ news.sort((a, b) => {
   <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
     {news.length > 0 ? (
       news.map(item => (
-        <a class="card col12" href={`/news/${item.slug}/`} style="display: block; text-decoration: none; transition: 0.2s;">
+        <a class="card col12" href={`${base}/news/${item.slug}/`}> style="display: block; text-decoration: none; transition: 0.2s;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
             <h2 style="margin: 0; font-size: 19px; color: var(--brand); flex: 1;">{item.title}</h2>
             <span class="meta" style="white-space: nowrap; background: var(--bg); padding: 2px 8px; border-radius: 4px;">
