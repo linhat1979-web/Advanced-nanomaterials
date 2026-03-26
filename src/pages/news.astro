@@ -2,19 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../../config/site.json';
 
-// 1. 安全抓取所有新聞檔案 
+// 1. 取得 base 路徑
+const base = import.meta.env.BASE_URL;
+
+// 2. 抓取所有新聞檔案
 const allNewsFiles = await Astro.glob('../content/news/*.md');
 
-// 2. 處理資料並加入防錯機制
+// 3. 處理資料
 const news = allNewsFiles.map(m => {
   const { title, date } = m.frontmatter;
   const raw = m.rawContent() || "";
-  
-  // 移除 Markdown 標頭，只取正文作為摘要
   const cleanContent = raw.replace(/---[\s\S]*?---/, '').trim();
   const excerpt = cleanContent ? cleanContent.slice(0, 100) + '...' : "點擊查看詳情...";
-
-  // 修正點：使用 m.file 取代 m.id 來取得檔名 
   const fileName = m.file.split('/').pop().replace('.md', '');
 
   return {
@@ -25,15 +24,8 @@ const news = allNewsFiles.map(m => {
   };
 });
 
-// 3. 安全排序
-news.sort((a, b) => {
-  const dateA = new Date(a.date).getTime();
-  const dateB = new Date(b.date).getTime();
-  return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
-});
-// src/pages/news.astro --- 區塊內
-const base = import.meta.env.BASE_URL;
-...
+// 4. 排序
+news.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 ---
 
 <BaseLayout title={`最新消息 - ${site.labNameEn}`}>
@@ -43,7 +35,8 @@ const base = import.meta.env.BASE_URL;
   <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
     {news.length > 0 ? (
       news.map(item => (
-        <a class="card col12" href={`${base}/news/${item.slug}/`}> style="display: block; text-decoration: none; transition: 0.2s;">
+        /* 關鍵修正：連結加上 ${base} */
+        <a class="card col12" href={`${base}/news/${item.slug}/`} style="display: block; text-decoration: none; transition: 0.2s;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
             <h2 style="margin: 0; font-size: 19px; color: var(--brand); flex: 1;">{item.title}</h2>
             <span class="meta" style="white-space: nowrap; background: var(--bg); padding: 2px 8px; border-radius: 4px;">
