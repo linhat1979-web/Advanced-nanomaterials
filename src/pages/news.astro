@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../../config/site.json';
+
+const news = (await Astro.glob('../content/news/*.md')).map(m => {
+  return {
+    title: m.frontmatter.title,
+    date: m.frontmatter.date,
+    coverImage: m.frontmatter.coverImage,
+    slug: m.id.split('/').pop().replace('.md','')
+  };
+});
+
+news.sort((a,b) => (a.date < b.date ? 1 : -1));
+---
+
+<BaseLayout title={site.labNameEn} description="News">
+  <h1 style="margin:10px 0 6px">最新消息</h1>
+  <p class="meta" style="margin-top:0">點進各篇查看內容</p>
+
+  <div class="grid" style="margin-top:16px">
+    {news.map(item => (
+      <a class="card col12" href={`/news/${item.slug}/`} style="display:block" aria-label={item.title}>
+        <div class="meta">{item.date}</div>
+        <h2 style="margin:8px 0 0">{item.title}</h2>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

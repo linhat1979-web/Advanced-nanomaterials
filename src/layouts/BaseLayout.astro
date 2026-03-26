@@ -1,0 +1,162 @@
+---
+const { title = 'Advanced Nanomaterials Laboratory', description = 'Laboratory website' } = Astro.props;
+---
+
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <link rel="icon" href="/favicon.svg" />
+
+    <style>
+      :root{
+        --bg:#fbf6ef;
+        --card:#ffffff;
+        --text:#2a1f18;
+        --muted:#6f5a4d;
+        --brand:#9b5a2e;
+        --brand2:#c27a3a;
+        --border:rgba(123,85,55,.18);
+      }
+      *{box-sizing:border-box}
+      body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--text)}
+      a{color:inherit; text-decoration:none}
+      header{position:sticky; top:0; z-index:50; background:rgba(251,246,239,.8); backdrop-filter: blur(10px); border-bottom:1px solid var(--border)}
+      .container{max-width:1100px; margin:0 auto; padding:0 18px}
+      nav{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+      .brand{display:flex; flex-direction:column; line-height:1.1}
+      .brand strong{letter-spacing:.2px}
+      .brand span{font-size:12px; color:var(--muted)}
+      .links{display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-end}
+      .links a{font-size:14px; color:var(--muted)}
+      .links a:hover{color:var(--text)}
+      .pill{border:1px solid var(--border); padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.6)}
+
+      main{padding:26px 0 56px}
+      .hero{border:1px solid var(--border); background:linear-gradient(180deg, rgba(194,122,58,.10), rgba(255,255,255,.0)); border-radius:22px; overflow:hidden}
+      .heroInner{display:grid; grid-template-columns: 1.2fr .8fr; gap:0}
+      @media (max-width: 900px){ .heroInner{grid-template-columns:1fr} }
+      .heroImg{min-height:280px; background-size:cover; background-position:center}
+      .heroText{padding:26px}
+      .heroText h1{margin:0 0 10px; font-size:34px; letter-spacing:-.4px}
+      .heroText p{margin:0; color:var(--muted); max-width:52ch}
+
+      .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:14px}
+      .col6{grid-column: span 6}
+      .col4{grid-column: span 4}
+      .col12{grid-column: span 12}
+      @media (max-width: 900px){ .col6, .col4{grid-column: span 12} }
+
+      .card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:16px}
+      .card h2{margin:0 0 8px; font-size:18px}
+      .meta{color:var(--muted); font-size:13px}
+      .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.8); cursor:pointer}
+      .btnPrimary{background:linear-gradient(90deg, var(--brand), var(--brand2)); border-color:transparent; color:white}
+      button.btn{font:inherit}
+
+      footer{border-top:1px solid var(--border); padding:24px 0; color:var(--muted); font-size:14px}
+      .translateBar{position:fixed; right:16px; bottom:16px; z-index:100}
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <div class="brand">
+            <strong>{title}</strong>
+            <span>Lab website • multi-language</span>
+          </div>
+          <div class="links">
+            <a href="/">首頁</a>
+            <a href="/research">研究方向</a>
+            <a href="/people">成員</a>
+            <a href="/equipment">研究設備</a>
+            <a href="/publications">期刊發表</a>
+            <a href="/news">最新消息</a>
+            <a class="pill" href="/contact">聯絡我們</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div>© {new Date().getFullYear()} Advanced Nanomaterials Laboratory</div>
+      </div>
+    </footer>
+
+    <div class="translateBar">
+      <button class="btn btnPrimary" id="translateBtn" type="button">Translate</button>
+    </div>
+
+    <script>
+      // Translate entire page via free, front-end translation.
+      // Note: This is a best-effort implementation; some environments may block translation requests.
+      const btn = document.getElementById('translateBtn');
+      let translated = false;
+      let originalText = null;
+
+      function getTranslatableNodes(){
+        // Translate visible content: main and header/footer texts excluding scripts/styles.
+        const main = document.querySelector('main');
+        const nav = document.querySelector('header');
+        const footer = document.querySelector('footer');
+        return [nav, main, footer].filter(Boolean);
+      }
+
+      function serializeHTML(nodes){
+        return nodes.map(n => n.innerText).join('\n');
+      }
+
+      async function translateText(text){
+        // Use a public translate endpoint via iframe-less approach (may be blocked by CORS).
+        // Fallback: do nothing if blocked.
+        // We try to use Google Translate public web endpoint.
+        const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-Hant&tl=en&dt=t&q=' + encodeURIComponent(text);
+        const res = await fetch(url);
+        const data = await res.json();
+        // data[0][i][0] concatenation
+        let out = '';
+        for (const part of data[0]) out += part[0];
+        return out;
+      }
+
+      btn?.addEventListener('click', async () => {
+        try {
+          const nodes = getTranslatableNodes();
+          if(!nodes.length) return;
+
+          if (!translated){
+            originalText = serializeHTML(nodes);
+            const t = await translateText(originalText);
+
+            // Replace by showing translated text in-place (simple but effective for "whole page" UX).
+            // For a Pro UX, we could map paragraphs back; start simple.
+            const main = document.querySelector('main');
+            if (main) main.innerHTML = '<div class="card"><h2>Translated (EN)</h2><p style="color:#6f5a4d;white-space:pre-wrap">' + t + '</p></div>';
+            translated = true;
+            btn.textContent = '中文';
+          } else {
+            // Reload page back to Chinese for perfect restoration.
+            location.reload();
+          }
+        } catch (e){
+          alert('Translate failed (可能因瀏覽器/網路限制)。可先以英文內容手動維護，之後我們再改用後端代理版本。');
+          console.error(e);
+        }
+      });
+    </script>
+  </body>
+</html>

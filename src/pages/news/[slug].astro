@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import site from '../../../config/site.json';
+
+const { slug } = Astro.params;
+const post = await Astro.glob(`../../content/news/*.md`);
+const file = post.find(p => p.id.endsWith(`/${slug}.md`));
+
+const { title, date, coverImage } = file.frontmatter;
+const content = file.render();
+---
+
+<BaseLayout title={site.labNameEn} description={title}>
+  <article class="card" style="margin-top:14px">
+    <div class="meta">{date}</div>
+    <h1 style="margin:10px 0 14px">{title}</h1>
+    {coverImage ? (
+      <img src={coverImage} alt="cover" style="width:100%; max-height:420px; object-fit:cover; border-radius:16px; border:1px solid rgba(123,85,55,.18)" />
+    ) : null}
+    <div style="margin-top:18px; line-height:1.8">
+      {content}
+    </div>
+  </article>
+</BaseLayout>
