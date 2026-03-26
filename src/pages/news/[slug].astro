@@ -2,23 +2,40 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import site from '../../../config/site.json';
 
-const { slug } = Astro.params;
-const post = await Astro.glob(`../../content/news/*.md`);
-const file = post.find(p => p.id.endsWith(`/${slug}.md`));
+// 1. 這是最關鍵的部分：定義哪些 slug 需要產生頁面
+export async function getStaticPaths() {
+  const allNews = await Astro.glob('../../content/news/*.md');
+  return allNews.map(post => ({
+    params: { 
+      // 取得檔名作為網址路徑
+      slug: post.file.split('/').pop().replace('.md', '') 
+    },
+    props: { post },
+  }));
+}
 
-const { title, date, coverImage } = file.frontmatter;
-const content = file.render();
+// 2. 取得從 getStaticPaths 傳過來的資料
+const { post } = Astro.props;
+const { title, date } = post.frontmatter;
+const Content = post.Content;
 ---
 
-<BaseLayout title={site.labNameEn} description={title}>
-  <article class="card" style="margin-top:14px">
-    <div class="meta">{date}</div>
-    <h1 style="margin:10px 0 14px">{title}</h1>
-    {coverImage ? (
-      <img src={coverImage} alt="cover" style="width:100%; max-height:420px; object-fit:cover; border-radius:16px; border:1px solid rgba(123,85,55,.18)" />
-    ) : null}
-    <div style="margin-top:18px; line-height:1.8">
-      {content}
+<BaseLayout title={`${title} - ${site.labNameEn}`}>
+  <article style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+    <a href="/news" style="text-decoration: none; color: var(--brand); font-weight: 600;">← 返回最新消息</a>
+    
+    <header style="margin-top: 24px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px;">
+      <h1 style="font-size: 32px; color: var(--brand); margin-bottom: 8px;">{title}</h1>
+      <p class="meta">發佈日期：{date}</p>
+    </header>
+
+    <div class="news-content" style="line-height: 1.8; font-size: 17px;">
+      <post.Content />
     </div>
   </article>
 </BaseLayout>
+
+<style is:global>
+  .news-content p { margin-bottom: 20px; }
+  .news-content img { max-width: 100%; border-radius: 8px; margin: 20px 0; }
+</style>
