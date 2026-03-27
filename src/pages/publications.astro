@@ -2,35 +2,51 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../../config/site.json';
 
-// 抓取所有論文並按年份排序
+// 1. 核心優化：自動抓取所有論文 Markdown 檔案
 const allPubs = await Astro.glob('../content/publications/*.md');
+
+// 2. 依照年份降序排列（最新的年份在前）
 allPubs.sort((a, b) => b.frontmatter.year - a.frontmatter.year);
 
+// 3. 提取所有不重複的年份作為分組標題
 const years = [...new Set(allPubs.map(p => p.frontmatter.year))];
 ---
 
 <BaseLayout title={`期刊發表 - ${site.labNameEn}`}>
-  <h1 style="color: var(--brand); margin-bottom: 8px;">期刊發表</h1>
-  <p class="meta">收錄本實驗室歷年發表之國際期刊研究成果。</p>
+  <div style="margin-bottom: 32px;">
+    <h1 style="color: var(--brand); margin-bottom: 8px;">期刊發表</h1>
+    <p class="meta">收錄本實驗室歷年發表之國際期刊研究成果。</p>
+  </div>
 
   {years.map(year => (
-    <section style="margin-top: 36px;">
-      <h2 style="color: var(--brand); border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">
+    <section style="margin-bottom: 48px;">
+      <h2 style="color: var(--brand); border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 24px; font-family: 'EB Garamond', serif; font-size: 32px;">
         {year}
       </h2>
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+      
+      <div style="display: flex; flex-direction: column; gap: 20px;">
         {allPubs.filter(p => p.frontmatter.year === year).map(p => (
-          <div class="card" style="padding: 20px; border-left: 5px solid var(--brand2);">
-            <div style="font-size: 13px; color: var(--brand2); font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">
+          <div class="card col12" style="padding: 24px; border-left: 5px solid var(--brand2); transition: 0.3s;">
+            <div style="font-size: 13px; color: var(--brand2); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
               {p.frontmatter.journal}
             </div>
-            <h3 style="margin: 0 0 8px; font-size: 18px; line-height: 1.4;">{p.frontmatter.title}</h3>
-            <p style="font-size: 14px; color: var(--text); margin-bottom: 12px; font-style: italic;">
+            
+            <h3 style="margin: 0 0 10px; font-size: 20px; line-height: 1.4; color: var(--text); font-weight: 600;">
+              {p.frontmatter.title}
+            </h3>
+            
+            <p style="font-size: 15px; color: var(--muted); margin-bottom: 16px; font-style: italic;">
               {p.frontmatter.authors}
             </p>
+            
             {p.frontmatter.doi && (
-              <a href={`https://doi.org/${p.frontmatter.doi}`} target="_blank" class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--bg);">
-                連結至期刊 (DOI) ↗
+              <a 
+                href={`https://doi.org/${p.frontmatter.doi}`} 
+                target="_blank" 
+                class="pill" 
+                style="display: inline-block; font-size: 12px; padding: 6px 16px; text-decoration: none;"
+              >
+                DOI: {p.frontmatter.doi} ↗
               </a>
             )}
           </div>

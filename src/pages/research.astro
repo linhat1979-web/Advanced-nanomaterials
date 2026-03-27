@@ -2,30 +2,50 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../../config/site.json';
 
+// 1. 取得子目錄路徑，確保圖片在 GitHub Pages 正常顯示
+const base = import.meta.env.BASE_URL;
+
+// 2. 核心優化：自動抓取該資料夾下所有 Markdown 研究檔案
 const allResearch = await Astro.glob('../content/research/*.md');
+
+// 3. 自動排序：依照 frontmatter 中的 order 數字由小到大排列
 const researchList = allResearch.sort((a, b) => (a.frontmatter.order || 99) - (b.frontmatter.order || 0));
 ---
 
 <BaseLayout title={`研究方向 - ${site.labNameEn}`}>
-  <h1 style="color: var(--brand); margin-bottom: 8px;">研究方向</h1>
-  <p class="meta">我們致力於開發前瞻性發光材料及其在感測與能源領域的應用。</p>
+  <div style="margin-bottom: 32px;">
+    <h1 style="color: var(--brand); margin-bottom: 8px;">研究方向</h1>
+    <p class="meta">我們致力於開發前瞻性發光材料及其在感測與能源領域的應用。</p>
+  </div>
 
-  <div class="grid" style="margin-top: 30px;">
-    {researchList.map(item => (
-      <div class="card col12" style="display: flex; flex-direction: column; gap: 20px;">
-        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-          {item.frontmatter.image && (
-            <img src={item.frontmatter.image} alt={item.frontmatter.title} 
-                 style="width: 100%; max-width: 350px; border-radius: 16px; object-fit: cover; border: 1px solid var(--border);" />
-          )}
-          <div style="flex: 1; min-width: 300px;">
-            <h2 style="margin-top: 0; color: var(--brand);">{item.frontmatter.title}</h2>
-            <div style="line-height: 1.8; color: var(--text); white-space: pre-wrap;">
-              <Fragment set:html={item.compiledContent()} />
+  <div class="grid" style="margin-top: 30px; display: flex; flex-direction: column; gap: 32px;">
+    {researchList.map(item => {
+      // 修正圖片路徑，支援本地與外部網址
+      const imageUrl = item.frontmatter.image 
+        ? (item.frontmatter.image.startsWith('http') ? item.frontmatter.image : `${base}${item.frontmatter.image}`)
+        : null;
+
+      return (
+        <div class="card col12">
+          <div style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;">
+            {imageUrl && (
+              <img 
+                src={imageUrl} 
+                alt={item.frontmatter.title} 
+                style="width: 100%; max-width: 400px; border-radius: 20px; object-fit: cover; border: 1px solid var(--border); box-shadow: var(--shadow);" 
+              />
+            )}
+            <div style="flex: 1; min-width: 300px;">
+              <h2 style="margin-top: 0; color: var(--brand); font-size: 28px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px;">
+                {item.frontmatter.title}
+              </h2>
+              <div style="line-height: 1.9; color: var(--text); font-size: 16px; white-space: pre-wrap;">
+                <Fragment set:html={item.compiledContent()} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    ))}
+      );
+    })}
   </div>
 </BaseLayout>
