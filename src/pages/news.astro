@@ -2,13 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../../config/site.json';
 
-// 1. 取得 base 路徑
+// 1. 取得子目錄路徑 [cite: 122]
 const base = import.meta.env.BASE_URL;
 
-// 2. 抓取所有新聞檔案
+// 2. 核心優化：自動抓取所有新聞 Markdown 檔案 
 const allNewsFiles = await Astro.glob('../content/news/*.md');
 
-// 3. 處理資料
+// 3. 自動排序與摘要處理 [cite: 123, 124]
 const news = allNewsFiles.map(m => {
   const { title, date } = m.frontmatter;
   const raw = m.rawContent() || "";
@@ -24,7 +24,7 @@ const news = allNewsFiles.map(m => {
   };
 });
 
-// 4. 排序
+// 依照日期由新到舊排序 
 news.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 ---
 
@@ -35,7 +35,6 @@ news.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
     {news.length > 0 ? (
       news.map(item => (
-        /* 關鍵修正：連結加上 ${base} */
         <a class="card col12" href={`${base}/news/${item.slug}/`} style="display: block; text-decoration: none; transition: 0.2s;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
             <h2 style="margin: 0; font-size: 19px; color: var(--brand); flex: 1;">{item.title}</h2>
